@@ -201,12 +201,8 @@ binary_to_existing_atom(B) ->
 
 read_frames(#{cowboy_req := Req,
               encoding := Encoding} = Stream) ->
-    %% This assumes that using option 'length' = 1 will avoid situations 
-    %% where cowboy is waiting for a buffer to fill up, but on the other hand 
-    %% it will also not be busy waiting (it looks like that happens when 
-    %% 'length' = 0)
     %% TODO: Verify this...
-    {More, InFrame, Req2} = cowboy_req:read_body(Req, #{length => 1}),
+    {More, InFrame, Req2} = cowboy_req:read_body(Req),
     %% TODO: Messages do not have to be aligned with frames. 
     Messages = split_frame(InFrame, Encoding),
     process_messages(Messages, Stream#{cowboy_req => Req2}, More).
